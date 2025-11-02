@@ -39,16 +39,37 @@
 
 ---
 
-## Phase 5: Scheduled Monitoring (Task Scheduling)
+## Phase 5: Task Details Page with Scraping Results
+- [ ] Create task details page showing task information and execution logs
+- [ ] Display scraped documents list with download buttons for each document
+- [ ] Display scraped links list with clickable URLs to visit them
+- [ ] Add download all functionality for documents (ZIP file)
+- [ ] Show task execution history and resource consumption
+- [ ] Add back navigation to tasks list
+
+---
+
+## Phase 6: Web Scraping Implementation
+- [ ] Implement actual web scraping logic using scrapegraphai and beautifulsoup4
+- [ ] Add AI-powered extraction option (optional toggle)
+- [ ] Process selected tags (links, documents, images, etc.) for targeted extraction
+- [ ] Store scraped data in task state and persist results
+- [ ] Add ability to run/execute tasks from the tasks table
+- [ ] Show real-time progress during scraping execution
+
+---
+
+## Phase 7: Scheduled Monitoring (Task Scheduling)
 - [ ] Add scheduling configuration UI for individual tasks (cron-like interface)
 - [ ] Implement schedule options: interval-based (every X minutes/hours) and cron expressions
 - [ ] Create monitoring dashboard showing scheduled tasks status and next run times
 - [ ] Add enable/disable toggle for scheduled tasks
 - [ ] Display execution history with timestamps and status (success/failed)
+- [ ] Implement background task scheduler to execute tasks automatically
 
 ---
 
-## Phase 6: Routines System (Multi-Script Orchestration)
+## Phase 8: Routines System (Multi-Script Orchestration)
 - [ ] Build routines management page for creating/editing routine workflows
 - [ ] Implement drag-and-drop or ordered list for defining script execution sequence
 - [ ] Add routine detail view showing all scripts in the routine with their order
@@ -58,16 +79,7 @@
 
 ---
 
-## Phase 7: Web Scraping Implementation
-- [ ] Implement actual web scraping logic using scrapegraphai
-- [ ] Add AI-powered extraction option (optional toggle)
-- [ ] Process selected tags (links, documents, images, etc.) for targeted extraction
-- [ ] Store scraped data and make it viewable in task details
-- [ ] Add export functionality for scraped data (JSON, CSV)
-
----
-
-## Phase 8: Advanced Features and Polish
+## Phase 9: Advanced Features and Polish
 - [ ] Add real-time notifications for task/routine completion or failures
 - [ ] Implement user settings page for notification preferences
 - [ ] Add data visualization charts for historical resource usage and task performance

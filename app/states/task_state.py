@@ -9,6 +9,8 @@ class Task(TypedDict):
     status: str
     last_run: str
     script_content: str
+    scraped_links: list[str]
+    scraped_documents: list[str]
 
 
 class ScrapingConfig(TypedDict):
@@ -20,6 +22,7 @@ class ScrapingConfig(TypedDict):
 
 class TaskState(rx.State):
     tasks: list[Task] = []
+    selected_task: Optional[Task] = None
     search_query: str = ""
     show_new_task_dialog: bool = False
     new_task_type: str = ""
@@ -85,6 +88,23 @@ class TaskState(rx.State):
         return rx.toast.info("Task creation logic not yet implemented.")
 
     @rx.event
+    def load_task_details(self):
+        """Load the details of a specific task based on the task_id from the URL."""
+        self.selected_task = None
+        if not self.tasks:
+            self.load_tasks()
+        task_id_str = self.router.page.params.get("task_id", "")
+        if task_id_str.isdigit():
+            task_id = int(task_id_str)
+            found_task = next(
+                (task for task in self.tasks if task["id"] == task_id), None
+            )
+            self.selected_task = found_task
+        else:
+            print(f"Invalid task_id: {task_id_str}")
+            self.selected_task = None
+
+    @rx.event
     def load_tasks(self):
         self.tasks = [
             {
@@ -93,6 +113,8 @@ class TaskState(rx.State):
                 "status": "completed",
                 "last_run": "2024-07-29 02:00:00",
                 "script_content": "print('Backing up data...')",
+                "scraped_links": [],
+                "scraped_documents": [],
             },
             {
                 "id": 2,
@@ -101,6 +123,14 @@ class TaskState(rx.State):
                 "last_run": "2024-07-28 10:30:00",
                 "script_content": """import pandas as pd
 print('Generating report...')""",
+                "scraped_links": [
+                    "https://example.com/report/1",
+                    "https://example.com/report/2",
+                ],
+                "scraped_documents": [
+                    "weekly_report_2024_w30.pdf",
+                    "sales_data_w30.csv",
+                ],
             },
             {
                 "id": 3,
@@ -108,6 +138,8 @@ print('Generating report...')""",
                 "status": "running",
                 "last_run": "2024-07-29 11:00:00",
                 "script_content": "print('Processing signups...')",
+                "scraped_links": [],
+                "scraped_documents": [],
             },
             {
                 "id": 4,
@@ -116,6 +148,8 @@ print('Generating report...')""",
                 "last_run": "Never",
                 "script_content": """import psutil
 print(f'CPU: {psutil.cpu_percent()}%')""",
+                "scraped_links": [],
+                "scraped_documents": [],
             },
         ]
 

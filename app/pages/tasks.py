@@ -56,8 +56,9 @@ def task_row(task: Task) -> rx.Component:
                     rx.icon(tag="play", class_name="h-4 w-4"),
                     class_name="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors",
                 ),
-                rx.el.button(
+                rx.el.a(
                     rx.icon(tag="eye", class_name="h-4 w-4"),
+                    href=f"/tasks/{task['id']}",
                     class_name="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors",
                 ),
                 rx.el.button(
