@@ -1,5 +1,5 @@
 import reflex as rx
-from typing import TypedDict
+from typing import TypedDict, Optional, Literal
 import datetime
 
 
@@ -11,9 +11,78 @@ class Task(TypedDict):
     script_content: str
 
 
+class ScrapingConfig(TypedDict):
+    url: str
+    tags: list[str]
+    use_ai: bool
+    schedule: Literal["once", "monitor"]
+
+
 class TaskState(rx.State):
     tasks: list[Task] = []
     search_query: str = ""
+    show_new_task_dialog: bool = False
+    new_task_type: str = ""
+    new_tag: str = ""
+    scraping_config: ScrapingConfig = {
+        "url": "",
+        "tags": ["links", "documents"],
+        "use_ai": False,
+        "schedule": "once",
+    }
+
+    @rx.event
+    def toggle_new_task_dialog(self):
+        self.show_new_task_dialog = not self.show_new_task_dialog
+        if not self.show_new_task_dialog:
+            self._reset_new_task_form()
+
+    def _reset_new_task_form(self):
+        self.new_task_type = ""
+        self.new_tag = ""
+        self.scraping_config = {
+            "url": "",
+            "tags": ["links", "documents"],
+            "use_ai": False,
+            "schedule": "once",
+        }
+
+    @rx.var
+    def task_name_suggestion(self) -> str:
+        if self.new_task_type == "web_scraping" and self.scraping_config["url"]:
+            try:
+                domain = self.scraping_config["url"].split("//")[1].split("/")[0]
+                return f"Scrape {domain}"
+            except IndexError as e:
+                import logging
+
+                logging.exception(f"Error parsing URL for task name suggestion: {e}")
+                return "Web Scraping Task"
+        return "New Task"
+
+    @rx.event
+    def add_tag(self):
+        if self.new_tag and self.new_tag not in self.scraping_config["tags"]:
+            self.scraping_config["tags"].append(self.new_tag)
+            self.new_tag = ""
+
+    @rx.event
+    def remove_tag(self, tag: str):
+        self.scraping_config["tags"].remove(tag)
+
+    @rx.event
+    def set_scraping_url(self, url: str):
+        self.scraping_config["url"] = url
+
+    @rx.event
+    def set_scraping_schedule(self, schedule: Literal["once", "monitor"]):
+        self.scraping_config["schedule"] = schedule
+
+    @rx.event
+    def create_new_task(self, form_data: dict):
+        print("Creating new task with data:", form_data)
+        self.toggle_new_task_dialog()
+        return rx.toast.info("Task creation logic not yet implemented.")
 
     @rx.event
     def load_tasks(self):
@@ -61,3 +130,7 @@ print(f'CPU: {psutil.cpu_percent()}%')""",
             if lower_query in task["name"].lower()
             or lower_query in task["status"].lower()
         ]
+
+    @rx.var
+    def monitored_tasks(self) -> list[Task]:
+        return [task for task in self.tasks if task["status"] == "running"]

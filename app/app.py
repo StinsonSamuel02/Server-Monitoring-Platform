@@ -37,15 +37,16 @@ app = rx.App(
         ),
     ],
 )
-app.add_page(
-    index, on_load=lambda: AuthState.set_is_authenticated(AuthState.is_authenticated)
-)
+
+
+def initial_auth_check():
+    return AuthState.set_is_authenticated(AuthState.is_authenticated)
+
+
+app.add_page(index, on_load=initial_auth_check)
 app.add_page(lambda: protected_page(dashboard_page()), route="/dashboard")
 from app.pages.tasks import tasks_page
-
-
-def monitoring_page():
-    return protected_page(rx.el.p("Monitoring Page Content"))
+from app.pages.monitoring import monitoring_page
 
 
 def routines_page():
